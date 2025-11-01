@@ -3,59 +3,266 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>পোস্ট জেনারেটর</title>
+    <title>Post Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; justify-content: center; align-items: center; color: #333; }
-        .main-container { background: #fff; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); width: 90%; max-width: 700px; text-align: center; }
-        h1 { color: #444; margin-bottom: 30px; font-size: 2.5em; font-weight: 300; }
-        .mode-selector { display: flex; justify-content: center; margin-bottom: 30px; gap: 10px; }
-        .mode-btn { padding: 12px 30px; font-size: 18px; border: 2px solid #667eea; background: transparent; color: #667eea; border-radius: 50px; cursor: pointer; transition: all 0.3s ease; }
-        .mode-btn.active { background: #667eea; color: white; }
-        .mode-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4); }
-        .post-display { background: #f9f9f9; border: 1px solid #e0e0e0; padding: 30px; min-height: 250px; border-radius: 10px; margin-bottom: 25px; text-align: left; white-space: pre-wrap; word-wrap: break-word; }
-        .post-display h3 { color: #333; margin-bottom: 15px; font-size: 1.8em; }
-        .post-display p { color: #555; font-size: 1.1em; line-height: 1.7; }
-        .action-buttons { display: flex; justify-content: center; gap: 15px; }
-        .btn { padding: 12px 25px; font-size: 16px; border: none; border-radius: 5px; cursor: pointer; transition: background 0.3s ease, transform 0.2s ease; }
-        .btn-regenerate { background: #48bb78; color: white; }
-        .btn-regenerate:hover { background: #38a169; transform: translateY(-2px); }
-        .btn-copy { background: #4299e1; color: white; }
-        .btn-copy:hover { background: #3182ce; transform: translateY(-2px); }
-        .btn-copy.copied { background: #2d3748; }
+        :root {
+            --bg-color: #0f0f0f;
+            --card-bg: #1a1a1a;
+            --primary-color: #6a5acd;
+            --primary-hover: #7b68ee;
+            --text-color: #e0e0e0;
+            --text-muted: #a0a0a0;
+            --border-color: #333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(106, 90, 205, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(106, 90, 205, 0.1) 0%, transparent 50%);
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 600px;
+            background-color: var(--card-bg);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+            text-align: center;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            margin-bottom: 30px;
+            font-size: 1rem;
+        }
+
+        .post-display-area {
+            background-color: #252525;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 30px;
+            min-height: 200px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.1rem;
+            white-space: pre-wrap; /* Preserves line breaks */
+            word-wrap: break-word;
+            line-height: 1.8;
+            transition: all 0.3s ease;
+        }
+
+        .post-display-area:empty::before {
+            content: "আপনার পোস্ট এখানে দেখাবে...";
+            color: var(--text-muted);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-generate {
+            background-color: var(--primary-color);
+        }
+
+        .btn-generate:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(106, 90, 205, 0.5);
+        }
+
+        .btn-copy {
+            background-color: #555;
+        }
+
+        .btn-copy:hover {
+            background-color: #666;
+            transform: translateY(-3px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .loading-spinner {
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-left-color: var(--primary-color);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: none;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
     </style>
 </head>
 <body>
-    <div class="main-container">
-        <h1>পোস্ট জেনারেটর</h1>
-        <div class="mode-selector">
-            <button class="mode-btn active" id="manualBtn">Manual</button>
-            <button class="mode-btn" id="autoBtn">Auto</button>
-        </div>
-        <div class="post-display" id="postDisplay">
-            <h3>স্বাগতম!</h3>
-            <p>পোস্ট দেখার জন্য উপরের মোড নির্বাচন করুন। 'Manual' মোডে অ্যাডমিন কর্তৃক যোগ করা পোস্ট দেখতে পাবেন এবং 'Auto' মোডে AI থেকে স্বয়ংক্রিয়ভাবে পোস্ট তৈরি হবে।</p>
-        </div>
+
+    <main class="main-container">
+        <h1>✨ Post Generator</h1>
+        <p class="subtitle">নিচের বাটনে ক্লিক করে একটি নতুন পোস্ট জেনারেট করুন</p>
+
+        <div id="post-display" class="post-display-area"></div>
+
         <div class="action-buttons">
-            <button class="btn btn-regenerate" id="regenerateBtn">রিজেনারেট</button>
-            <button class="btn btn-copy" id="copyBtn">কপি করুন</button>
+            <button id="generate-btn" class="btn btn-generate">
+                <span>🔄</span>
+                <span>জেনারেট করুন</span>
+                <div class="loading-spinner"></div>
+            </button>
+            <button id="copy-btn" class="btn btn-copy">
+                <span>📋</span>
+                <span>কপি করুন</span>
+            </button>
         </div>
-    </div>
+    </main>
+
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const manualBtn = document.getElementById('manualBtn'); const autoBtn = document.getElementById('autoBtn'); const postDisplay = document.getElementById('postDisplay'); const regenerateBtn = document.getElementById('regenerateBtn'); const copyBtn = document.getElementById('copyBtn');
-            let currentMode = 'manual'; let manualPostIndex = 0; let autoInterval = null;
-            const aiTitles = ["প্রযুক্তির ভবিষ্যৎ: কৃত্রিম বুদ্ধিমত্তা", "সুস্থ থাকার জন্য ৫টি সহজ উপায়", "ডিজিটাল মার্কেটিং: নতুন দিগন্ত", "ভ্রমণের গল্প: পাহাড়ের চূড়ায়", "প্রোগ্রামিং শেখার সেরা ৭টি টিপস"];
-            const aiContents = ["কৃত্রিম বুদ্ধিমত্তা বা AI আমাদের জীবনকে প্রভাবিত করছে এমন একটি প্রযুক্তি যা শুধু শিল্প নয়, বরং দৈনন্দিন জীবনেও এর প্রভাব স্পষ্ট। স্মার্ট ফোন থেকে শুরু করে স্বয়ংক্রিয় গাড়ি, সর্বত্রই AI-এর ব্যবহার লক্ষ্য করা যাচ্ছে। ভবিষ্যতে এর আওতা আরও বৃদ্ধি পাবে।", "সুস্থ থাকা মানেই শুধু শারীরিক সুস্থতা নয়, মানসিক সুস্থতাও অত্যন্ত জরুরি। প্রতিদিন নিয়মিত ব্যায়াম, পুষ্টিকর খাবার গ্রহণ, পর্যাপ্ত ঘুম, ধ্যান এবং পরিবার ও বন্ধুদের সাথে সময় কাটানো আপনাকে সুস্থ ও সক্রিয় রাখতে সাহায্য করবে।", "আজকের ডিজিটাল যুগে মার্কেটিং একটি নতুন রূপ নিয়েছে। সোশ্যাল মিডিয়া, সার্চ ইঞ্জিন অপটিমাইজেশন (SEO), কন্টেন্ট মার্কেটিং এবং ইমেল মার্কেটিং হলো ডিজিটাল মার্কেটিং-এর প্রধান হাতিয়ার। এগুলো সঠিকভাবে ব্যবহার করতে পারলে যেকোনো ব্যবসার প্রসার ঘটানো সম্ভব।", "পাহাড়ের চূড়ায় দাঁড়িয়ে নিচে তাকালে যে শান্তি পাওয়া যায়, তা অতুলনীয়। সবুজ শ্যামলিমা, মেঘের খেলা আর বাতাসের সুরে মন ভরে যায়। ভ্রমণ শুধু নতুন জায়গা দেখার নয়, নতুন অভিজ্ঞতা অর্জনেরও একটি মাধ্যম।", "প্রোগ্রামিং শেখা একটি চ্যালেঞ্জিং কাজ হতে পারে, কিন্তু সঠিক পদ্ধতি অনুসরণ করলে তা সহজ হয়ে যায়। প্রথমে একটি ভাষা বেছে নিন, বেসিক ধারণা মজবুত করুন, নিয়মিত অনুশীলন করুন, ছোট ছোট প্রজেক্ট করুন এবং অন্যদের কোড দেখে শিখুন। ধৈর্য ধরে এগিয়ে যান।"];
-            const getPosts = () => { let posts = localStorage.getItem('posts'); return posts ? JSON.parse(posts) : []; };
-            const showManualPost = () => { const posts = getPosts(); if (posts.length === 0) { postDisplay.innerHTML = `<h3>কোনো পোস্ট নেই</h3><p>অ্যাডমিন প্যানেল থেকে প্রথমে কিছু পোস্ট যুক্ত করুন।</p>`; return; } const post = posts[manualPostIndex]; postDisplay.innerHTML = `<p>${post.content}</p>`; manualPostIndex = (manualPostIndex + 1) % posts.length; };
-            const generateAutoPost = () => { const randomTitleIndex = Math.floor(Math.random() * aiTitles.length); const randomContentIndex = Math.floor(Math.random() * aiContents.length); postDisplay.innerHTML = `<h3>${aiTitles[randomTitleIndex]}</h3><p>${aiContents[randomContentIndex]}</p>`; };
-            const setMode = (mode) => { currentMode = mode; if (autoInterval) { clearInterval(autoInterval); autoInterval = null; } if (mode === 'manual') { manualBtn.classList.add('active'); autoBtn.classList.remove('active'); showManualPost(); } else { autoBtn.classList.add('active'); manualBtn.classList.remove('active'); generateAutoPost(); autoInterval = setInterval(generateAutoPost, 5000); } };
-            manualBtn.addEventListener('click', () => setMode('manual')); autoBtn.addEventListener('click', () => setMode('auto'));
-            regenerateBtn.addEventListener('click', () => { if (currentMode === 'manual') { showManualPost(); } else { generateAutoPost(); } });
-            copyBtn.addEventListener('click', () => { const textToCopy = postDisplay.innerText; navigator.clipboard.writeText(textToCopy).then(() => { copyBtn.textContent = 'কপি হয়েছে!'; copyBtn.classList.add('copied'); setTimeout(() => { copyBtn.textContent = 'কপি করুন'; copyBtn.classList.remove('copied'); }, 2000); }).catch(err => { console.error('কপি করতে ব্যর্থ হয়েছে: ', err); }); });
-            setMode('manual');
-        });
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAjcAv64YFJndEMptOWfGTmR5LG-8ymSdE",
+            authDomain: "genaretor.firebaseapp.com",
+            databaseURL: "https://genaretor-default-rtdb.firebaseio.com",
+            projectId: "genaretor",
+            storageBucket: "genaretor.firebasestorage.app",
+            messagingSenderId: "44288000929",
+            appId: "1:44288000929:web:06e297c4fae8ec22eb81e0",
+            measurementId: "G-7MHR7R1NFL"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const postsRef = database.ref('posts');
+
+        const generateBtn = document.getElementById('generate-btn');
+        const copyBtn = document.getElementById('copy-btn');
+        const postDisplay = document.getElementById('post-display');
+        const spinner = generateBtn.querySelector('.loading-spinner');
+
+        let allPosts = [];
+        let currentPostIndex = -1;
+
+        // Fetch all posts from the database
+        function loadAllPosts() {
+            postsRef.once('value', (snapshot) => {
+                allPosts = [];
+                if (snapshot.exists()) {
+                    snapshot.forEach((childSnapshot) => {
+                        allPosts.push(childSnapshot.val().content);
+                    });
+                }
+                // Shuffle posts for a random feel
+                allPosts.sort(() => Math.random() - 0.5);
+            });
+        }
+
+        // Generate a new post
+        function generatePost() {
+            if (allPosts.length === 0) {
+                postDisplay.textContent = "কোনো পোস্ট পাওয়া যায়নি। অনুগ্রহ করে অ্যাডমিনকে পোস্ট যোগ করতে বলুন।";
+                return;
+            }
+
+            // Show loading state
+            generateBtn.disabled = true;
+            spinner.style.display = 'inline-block';
+            generateBtn.querySelector('span:nth-child(2)').textContent = 'লোড হচ্ছে...';
+
+            // Simulate a small delay for a better UX
+            setTimeout(() => {
+                currentPostIndex = (currentPostIndex + 1) % allPosts.length;
+                const nextPost = allPosts[currentPostIndex];
+                
+                postDisplay.style.opacity = '0';
+                setTimeout(() => {
+                    postDisplay.textContent = nextPost;
+                    postDisplay.style.opacity = '1';
+                }, 300);
+
+                // Reset button state
+                generateBtn.disabled = false;
+                spinner.style.display = 'none';
+                generateBtn.querySelector('span:nth-child(2)').textContent = 'জেনারেট করুন';
+            }, 500);
+        }
+
+        // Copy the current post to clipboard
+        async function copyPost() {
+            const postText = postDisplay.textContent;
+            if (!postText || postText.includes("আপনার পোস্ট") || postText.includes("কোনো পোস্ট পাওয়া যায়নি")) {
+                alert("কপি করার মতো কোনো পোস্ট নেই। আগে একটি পোস্ট জেনারেট করুন।");
+                return;
+            }
+
+            try {
+                await navigator.clipboard.writeText(postText);
+                const originalText = copyBtn.querySelector('span:nth-child(2)').textContent;
+                copyBtn.querySelector('span:nth-child(2)').textContent = 'কপি হয়েছে!';
+                copyBtn.style.backgroundColor = '#28a745';
+                setTimeout(() => {
+                    copyBtn.querySelector('span:nth-child(2)').textContent = originalText;
+                    copyBtn.style.backgroundColor = '#555';
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy text: ', err);
+                alert('কপি করতে ব্যর্থ হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।');
+            }
+        }
+
+        // Event Listeners
+        generateBtn.addEventListener('click', generatePost);
+        copyBtn.addEventListener('click', copyPost);
+
+        // Initial load
+        loadAllPosts();
     </script>
 </body>
 </html>
