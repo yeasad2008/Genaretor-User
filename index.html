@@ -3,246 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yeasad Post Generator</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;700&display=swap" rel="stylesheet">
+    <title>পোস্ট জেনারেটর</title>
     <style>
-        :root {
-            --primary-blue: #3b82f6;
-            --success-green: #10b981;
-            --dark-bg: #1f2937;
-            --card-bg: #374151;
-            --text-display-bg: #4b5563;
-            --text-color: #f3f4f6;
-            --text-light: #d1d5db;
-            --shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-        }
-        body {
-            font-family: 'Noto Sans Bengali', sans-serif;
-            background-color: var(--dark-bg);
-            color: var(--text-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-        .container {
-            background-color: var(--card-bg);
-            padding: 35px;
-            border-radius: 20px;
-            box-shadow: var(--shadow);
-            width: 100%;
-            max-width: 500px;
-            text-align: center;
-            border: 1px solid #4b5563;
-        }
-        h1 {
-            color: var(--text-color);
-            margin-bottom: 10px;
-            font-weight: 700;
-            font-size: 28px;
-        }
-        #postCounter {
-            color: var(--text-light);
-            margin-bottom: 25px;
-            font-size: 14px;
-            font-weight: 500;
-            background-color: var(--dark-bg);
-            padding: 5px 10px;
-            border-radius: 20px;
-            display: inline-block;
-        }
-        #postDisplay {
-            background-color: var(--text-display-bg);
-            border-radius: 15px;
-            padding: 25px;
-            min-height: 160px;
-            margin-bottom: 30px;
-            font-size: 17px;
-            line-height: 1.8;
-            text-align: left;
-            white-space: pre-wrap;
-            color: var(--text-color);
-        }
-        .buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-        button {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            border: none;
-            padding: 15px 20px;
-            font-size: 16px;
-            font-weight: 700;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.2s ease-in-out;
-            color: white;
-        }
-        button:hover {
-            transform: scale(1.05);
-        }
-        button:active {
-            transform: scale(0.98);
-        }
-        #generateBtn { background-color: var(--primary-blue); }
-        #copyBtn { background-color: var(--success-green); }
-        .icon {
-            width: 20px;
-            height: 20px;
-        }
-        /* নতুন স্টাইল: কপি ফিডব্যাক বার্তার জন্য */
-        #copy-feedback {
-            margin-top: 20px;
-            font-weight: 500;
-            color: var(--success-green);
-            opacity: 0; /* শুরুতে অদৃশ্য থাকবে */
-            transition: opacity 0.4s ease-in-out;
-            height: 20px; /* লেআউট যেন না ভাঙ্গে তার জন্য জায়গা রাখা */
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; justify-content: center; align-items: center; color: #333; }
+        .main-container { background: #fff; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); width: 90%; max-width: 700px; text-align: center; }
+        h1 { color: #444; margin-bottom: 30px; font-size: 2.5em; font-weight: 300; }
+        .mode-selector { display: flex; justify-content: center; margin-bottom: 30px; gap: 10px; }
+        .mode-btn { padding: 12px 30px; font-size: 18px; border: 2px solid #667eea; background: transparent; color: #667eea; border-radius: 50px; cursor: pointer; transition: all 0.3s ease; }
+        .mode-btn.active { background: #667eea; color: white; }
+        .mode-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4); }
+        .post-display { background: #f9f9f9; border: 1px solid #e0e0e0; padding: 30px; min-height: 250px; border-radius: 10px; margin-bottom: 25px; text-align: left; white-space: pre-wrap; word-wrap: break-word; }
+        .post-display h3 { color: #333; margin-bottom: 15px; font-size: 1.8em; }
+        .post-display p { color: #555; font-size: 1.1em; line-height: 1.7; }
+        .action-buttons { display: flex; justify-content: center; gap: 15px; }
+        .btn { padding: 12px 25px; font-size: 16px; border: none; border-radius: 5px; cursor: pointer; transition: background 0.3s ease, transform 0.2s ease; }
+        .btn-regenerate { background: #48bb78; color: white; }
+        .btn-regenerate:hover { background: #38a169; transform: translateY(-2px); }
+        .btn-copy { background: #4299e1; color: white; }
+        .btn-copy:hover { background: #3182ce; transform: translateY(-2px); }
+        .btn-copy.copied { background: #2d3748; }
     </style>
 </head>
 <body>
-
-    <div class="container">
-        <h1> Post Generator</h1>
-        <p id="postCounter">পোস্ট: ০ / ০</p>
-        <div id="postDisplay">জেনারেট করুন...</div>
-        <div class="buttons">
-            <button id="generateBtn" onclick="generatePost()">
-                <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 512 512"><path d="M403.8 34.4c12-5 25.7-2.2 34.9 6.9l64 64c6 6 9.4 14.1 9.4 22.6s-3.4 16.6-9.4 22.6l-64 64c-9.2 9.2-22.9 11.9-34.9 6.9s-19.8-16.6-19.8-29.6V160H352c-10.1 0-19.6 4.7-25.6 12.8L161.2 419.2c-6 8.1-15.5 12.8-25.6 12.8H32c-17.7 0-32-14.3-32-32s14.3-32 32-32h103.6c10.1 0 19.6-4.7 25.6-12.8L326.8 92.8c6-8.1 15.5-12.8 25.6-12.8H384V48c0-12.9 7.8-24.6 19.8-29.6zM160 352H32c-17.7 0-32 14.3-32 32s14.3 32 32 32h128c17.7 0 32-14.3 32-32s-14.3-32-32-32z"/></svg>
-                <span>জেনারেট</span>
-            </button>
-            <button id="copyBtn" onclick="copyPost()">
-                <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 448 512"><path d="M384 336H192c-8.8 0-16-7.2-16-16V64c0-8.8 7.2-16 16-16l140.1 0L400 115.9V320c0 8.8-7.2 16-16 16zM192 384H384c35.3 0 64-28.7 64-64V115.9c0-12.7-5.1-24.9-14.1-33.9L366.1 14.1c-9-9-21.2-14.1-33.9-14.1H192c-35.3 0-64 28.7-64 64V320c0 35.3 28.7 64 64 64zM64 128c-35.3 0-64 28.7-64 64V448c0 35.3 28.7 64 64 64H256c35.3 0 64-28.7 64-64V416H272v32c0 8.8-7.2 16-16 16H64c-8.8 0-16-7.2-16-16V192c0-8.8 7.2-16 16-16H96V128H64z"/></svg>
-                <span>কপি করুন</span>
-            </button>
+    <div class="main-container">
+        <h1>পোস্ট জেনারেটর</h1>
+        <div class="mode-selector">
+            <button class="mode-btn active" id="manualBtn">Manual</button>
+            <button class="mode-btn" id="autoBtn">Auto</button>
         </div>
-        <!-- কপি ফিডব্যাক এখানে দেখানো হবে -->
-        <div id="copy-feedback"></div>
+        <div class="post-display" id="postDisplay">
+            <h3>স্বাগতম!</h3>
+            <p>পোস্ট দেখার জন্য উপরের মোড নির্বাচন করুন। 'Manual' মোডে অ্যাডমিন কর্তৃক যোগ করা পোস্ট দেখতে পাবেন এবং 'Auto' মোডে AI থেকে স্বয়ংক্রিয়ভাবে পোস্ট তৈরি হবে।</p>
+        </div>
+        <div class="action-buttons">
+            <button class="btn btn-regenerate" id="regenerateBtn">রিজেনারেট</button>
+            <button class="btn btn-copy" id="copyBtn">কপি করুন</button>
+        </div>
     </div>
-
-    <!-- Firebase SDK Scripts -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyAjcAv64YFJndEMptOWfGTmR5LG-8ymSdE",
-            authDomain: "genaretor.firebaseapp.com",
-            databaseURL: "https://genaretor-default-rtdb.firebaseio.com",
-            projectId: "genaretor",
-            storageBucket: "genaretor.appspot.com",
-            messagingSenderId: "44288000929",
-            appId: "1:44288000929:web:06e297c4fae8ec22eb81e0"
-        };
-
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
-        const database = firebase.database();
-        const postsRef = database.ref('posts');
-        const postDisplay = document.getElementById('postDisplay');
-        const postCounter = document.getElementById('postCounter');
-
-        let allPosts = [];
-        let currentIndex = -1;
-
-        postsRef.on('value', (snapshot) => {
-            const data = snapshot.val();
-            allPosts = data ? Object.values(data).map(post => post.content) : [];
-            loadInitialPost();
+        document.addEventListener('DOMContentLoaded', () => {
+            const manualBtn = document.getElementById('manualBtn'); const autoBtn = document.getElementById('autoBtn'); const postDisplay = document.getElementById('postDisplay'); const regenerateBtn = document.getElementById('regenerateBtn'); const copyBtn = document.getElementById('copyBtn');
+            let currentMode = 'manual'; let manualPostIndex = 0; let autoInterval = null;
+            const aiTitles = ["প্রযুক্তির ভবিষ্যৎ: কৃত্রিম বুদ্ধিমত্তা", "সুস্থ থাকার জন্য ৫টি সহজ উপায়", "ডিজিটাল মার্কেটিং: নতুন দিগন্ত", "ভ্রমণের গল্প: পাহাড়ের চূড়ায়", "প্রোগ্রামিং শেখার সেরা ৭টি টিপস"];
+            const aiContents = ["কৃত্রিম বুদ্ধিমত্তা বা AI আমাদের জীবনকে প্রভাবিত করছে এমন একটি প্রযুক্তি যা শুধু শিল্প নয়, বরং দৈনন্দিন জীবনেও এর প্রভাব স্পষ্ট। স্মার্ট ফোন থেকে শুরু করে স্বয়ংক্রিয় গাড়ি, সর্বত্রই AI-এর ব্যবহার লক্ষ্য করা যাচ্ছে। ভবিষ্যতে এর আওতা আরও বৃদ্ধি পাবে।", "সুস্থ থাকা মানেই শুধু শারীরিক সুস্থতা নয়, মানসিক সুস্থতাও অত্যন্ত জরুরি। প্রতিদিন নিয়মিত ব্যায়াম, পুষ্টিকর খাবার গ্রহণ, পর্যাপ্ত ঘুম, ধ্যান এবং পরিবার ও বন্ধুদের সাথে সময় কাটানো আপনাকে সুস্থ ও সক্রিয় রাখতে সাহায্য করবে।", "আজকের ডিজিটাল যুগে মার্কেটিং একটি নতুন রূপ নিয়েছে। সোশ্যাল মিডিয়া, সার্চ ইঞ্জিন অপটিমাইজেশন (SEO), কন্টেন্ট মার্কেটিং এবং ইমেল মার্কেটিং হলো ডিজিটাল মার্কেটিং-এর প্রধান হাতিয়ার। এগুলো সঠিকভাবে ব্যবহার করতে পারলে যেকোনো ব্যবসার প্রসার ঘটানো সম্ভব।", "পাহাড়ের চূড়ায় দাঁড়িয়ে নিচে তাকালে যে শান্তি পাওয়া যায়, তা অতুলনীয়। সবুজ শ্যামলিমা, মেঘের খেলা আর বাতাসের সুরে মন ভরে যায়। ভ্রমণ শুধু নতুন জায়গা দেখার নয়, নতুন অভিজ্ঞতা অর্জনেরও একটি মাধ্যম।", "প্রোগ্রামিং শেখা একটি চ্যালেঞ্জিং কাজ হতে পারে, কিন্তু সঠিক পদ্ধতি অনুসরণ করলে তা সহজ হয়ে যায়। প্রথমে একটি ভাষা বেছে নিন, বেসিক ধারণা মজবুত করুন, নিয়মিত অনুশীলন করুন, ছোট ছোট প্রজেক্ট করুন এবং অন্যদের কোড দেখে শিখুন। ধৈর্য ধরে এগিয়ে যান।"];
+            const getPosts = () => { let posts = localStorage.getItem('posts'); return posts ? JSON.parse(posts) : []; };
+            const showManualPost = () => { const posts = getPosts(); if (posts.length === 0) { postDisplay.innerHTML = `<h3>কোনো পোস্ট নেই</h3><p>অ্যাডমিন প্যানেল থেকে প্রথমে কিছু পোস্ট যুক্ত করুন।</p>`; return; } const post = posts[manualPostIndex]; postDisplay.innerHTML = `<p>${post.content}</p>`; manualPostIndex = (manualPostIndex + 1) % posts.length; };
+            const generateAutoPost = () => { const randomTitleIndex = Math.floor(Math.random() * aiTitles.length); const randomContentIndex = Math.floor(Math.random() * aiContents.length); postDisplay.innerHTML = `<h3>${aiTitles[randomTitleIndex]}</h3><p>${aiContents[randomContentIndex]}</p>`; };
+            const setMode = (mode) => { currentMode = mode; if (autoInterval) { clearInterval(autoInterval); autoInterval = null; } if (mode === 'manual') { manualBtn.classList.add('active'); autoBtn.classList.remove('active'); showManualPost(); } else { autoBtn.classList.add('active'); manualBtn.classList.remove('active'); generateAutoPost(); autoInterval = setInterval(generateAutoPost, 5000); } };
+            manualBtn.addEventListener('click', () => setMode('manual')); autoBtn.addEventListener('click', () => setMode('auto'));
+            regenerateBtn.addEventListener('click', () => { if (currentMode === 'manual') { showManualPost(); } else { generateAutoPost(); } });
+            copyBtn.addEventListener('click', () => { const textToCopy = postDisplay.innerText; navigator.clipboard.writeText(textToCopy).then(() => { copyBtn.textContent = 'কপি হয়েছে!'; copyBtn.classList.add('copied'); setTimeout(() => { copyBtn.textContent = 'কপি করুন'; copyBtn.classList.remove('copied'); }, 2000); }).catch(err => { console.error('কপি করতে ব্যর্থ হয়েছে: ', err); }); });
+            setMode('manual');
         });
-
-        function loadInitialPost() {
-            const savedIndex = localStorage.getItem('lastViewedIndex');
-            if (savedIndex !== null && allPosts.length > 0 && parseInt(savedIndex) < allPosts.length) {
-                currentIndex = parseInt(savedIndex);
-            } else if (allPosts.length > 0) {
-                currentIndex = 0;
-            } else {
-                currentIndex = -1;
-            }
-            updateDisplay();
-        }
-
-        function generatePost() {
-            if (allPosts.length <= 1) { return; }
-            let newIndex;
-            do {
-                newIndex = Math.floor(Math.random() * allPosts.length);
-            } while (newIndex === currentIndex);
-            currentIndex = newIndex;
-            localStorage.setItem('lastViewedIndex', currentIndex);
-            updateDisplay();
-        }
-
-        function updateDisplay() {
-            if (currentIndex !== -1 && allPosts.length > 0) {
-                postDisplay.innerText = allPosts[currentIndex];
-                postCounter.innerText = `পোস্ট: ${currentIndex + 1} / ${allPosts.length}`;
-            } else {
-                postDisplay.innerText = "কোনো পোস্ট পাওয়া যায়নি। অ্যাডমিন পোস্ট যোগ করলে এখানে দেখতে পাবেন।";
-                postCounter.innerText = `পোস্ট: ০ / ০`;
-            }
-        }
-
-        // **পরিবর্তিত ফাংশন: কপি মেসেজ নিচে দেখানোর জন্য**
-        function showCopySuccess() {
-            const feedback = document.getElementById('copy-feedback');
-            feedback.innerText = "পোস্ট সফলভাবে কপি হয়েছে!";
-            feedback.style.opacity = '1';
-
-            // ২.৫ সেকেন্ড পর মেসেজটি অদৃশ্য হয়ে যাবে
-            setTimeout(() => {
-                feedback.style.opacity = '0';
-            }, 2500);
-        }
-
-        function copyPost() {
-            const postText = postDisplay.innerText;
-            if (!postText || postText.includes("শুরু করুন") || postText.includes("পাওয়া যায়নি")) {
-                alert("কপি করার মতো কোনো পোস্ট নেই।");
-                return;
-            }
-
-            if (navigator.clipboard && window.isSecureContext) {
-                navigator.clipboard.writeText(postText).then(showCopySuccess).catch(err => {
-                    fallbackCopyText(postText);
-                });
-            } else {
-                fallbackCopyText(postText);
-            }
-        }
-
-        function fallbackCopyText(text) {
-            const textArea = document.createElement("textarea");
-            textArea.value = text;
-            textArea.style.position = "fixed";
-            textArea.style.top = "-9999px";
-            textArea.style.left = "-9999px";
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
-            try {
-                if (document.execCommand('copy')) {
-                    showCopySuccess();
-                } else {
-                   alert("দুঃখিত, আপনার ব্রাউজারে কপি করা সম্ভব হচ্ছে না।");
-                }
-            } catch (err) {
-                alert("দুঃখিত, কপি করা সম্ভব হচ্ছে না।");
-            }
-            document.body.removeChild(textArea);
-        }
     </script>
 </body>
 </html>
